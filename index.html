@@ -2,9 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>First Project</title>
 </head>
+
 <body>
+
+<h1>Nessis pagina</h1>
+
+<!-- Barra de navegación -->
+<h2>Barra de navegación</h2>
+<nav class="navbar" id="navbar">
+    <a href="#inicio">Inicio</a>
+    <a href="#servicios">Servicios</a>
+    <a href="#portfolio">Portfolio</a>
+    <!-- Enlace con ruta vacía según requisito -->
+    <a href="">Blog</a>
+</nav>
+
+<!-- Sección inicio -->
+<section id="inicio">
+    <h2>Inicio</h2>
+    <p>Bienvenido a mi página web.</p>
+</section>
+
+<!-- Tabla -->
+<section id="servicios">
+    <h2>Tabla</h2>
+    <table>
+        <tr>
+            <th>Servicio</th>
+            <th>Precio</th>
+        </tr>
+        <tr>
+            <td>Diseño web</td>
+            <td>$100</td>
+        </tr>
+        <tr>
+            <td>Programación</td>
+            <td>$150</td>
+        </tr>
+    </table>
+</section>
+
+<!-- Elemento incrustado -->
+<section id="portfolio">
+    <h2>Elemento externo incrustado</h2>
+    <iframe
+            width="1020"
+            height="580"
+            src="https://www.youtube.com/embed/QMJzjz-vWyg"
+            title="video">
+    </iframe>
+</section>
+
+<!-- Formulario -->
+<section id="formulario">
+    <h2>Formulario</h2>
+    <form>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+
+        <label for="mensaje">Mensaje:</label><br>
+        <textarea id="mensaje" name="mensaje"></textarea><br><br>
+
+        <button type="button" onclick="alert('Formulario enviado')">Enviar</button>
+    </form>
+</section>
+
+<!-- Elemento multimedia -->
+<section>
+    <h2>Imagen</h2>
+    <img
+            src="https://inasianspaces.com/wp-content/uploads/2020/08/ch-131-freedom.jpg"
+            alt="Eren free"
+            width="1500">
+</section>
 
 </body>
 </html>
