@@ -1,217 +1,400 @@
-// Aplicacion de una sola pagina: todo el contenido visible se crea con JS.
-const app = document.getElementById("app");
-
-const navItems = ["inicio", "servicios", "portfolio", "blog", "formulario"];
-const enabledSections = new Set(navItems);
-
-const services = [
-  { name: "Diseno web", price: "$100" },
-  { name: "Programacion", price: "$150" },
-  { name: "SEO tecnico", price: "$120" },
-];
-
-const sections = new Map([
-  [
-    "inicio",
-    {
-      title: "Inicio",
-      description:
-        "Bienvenido. Esta vista se intercambia sin recargar la pagina.",
-    },
-  ],
-  [
-    "servicios",
-    {
-      title: "Servicios",
-      description: "Tabla generada en JS con bucles.",
-    },
-  ],
-  [
-    "portfolio",
-    {
-      title: "Portfolio",
-      description: "Contenido incrustado para mostrar un trabajo destacado.",
-    },
-  ],
-  [
-    "blog",
-    {
-      title: "Blog",
-      description: "Entradas simuladas usando while para no repetir codigo.",
-    },
-  ],
-  [
-    "formulario",
-    {
-      title: "Formulario",
-      description: "Formulario simple con validacion basica.",
-    },
-  ],
+// Map: secciones de la SPA adaptadas a tu practica.
+const secciones = new Map([
+  ["inicio", "Inicio"],
+  ["servicios", "Servicios"],
+  ["portfolio", "Portfolio"],
+  ["blog", "Blog"],
+  ["formulario", "Formulario"],
 ]);
 
-const blogPosts = [
-  "Como organizo proyectos web pequenos.",
-  "Tres trucos para acelerar JavaScript en el navegador.",
-  "Errores comunes al crear navegacion dinamica.",
+// Array: contenido para la seccion inicial.
+const habilidades = ["Python", "JavaScript", "HTML", "SQL", "Git"];
+
+// Set: tecnologias unicas sin duplicados.
+const tecnologiasUnicas = new Set([
+  "Python",
+  "JavaScript",
+  "SQL",
+  "Git",
+  "Python",
+]);
+
+// Array de objetos para tabla de servicios.
+const servicios = [
+  { nombre: "Diseno web", precio: "$100" },
+  { nombre: "Programacion", precio: "$150" },
+  { nombre: "Mantenimiento", precio: "$90" },
 ];
 
-function createLayout() {
-  const layout = document.createElement("div");
-  layout.className = "layout";
+// Array de objetos para el blog/proyectos.
+const posts = [
+  {
+    titulo: "Entrada 1",
+    texto: "Organizacion de una pagina web y estructura en modulos.",
+    anio: 2026,
+  },
+  {
+    titulo: "Entrada 2",
+    texto: "Eventos, validaciones y navegacion dinamica en JavaScript.",
+    anio: 2026,
+  },
+  {
+    titulo: "Entrada 3",
+    texto: "Uso de Map, Set, Array, switch, if, for y while.",
+    anio: 2026,
+  },
+];
 
-  const title = document.createElement("h1");
-  title.className = "title";
-  title.textContent = "Practica de Interactividad con JavaScript";
+// Objeto para generar la tabla de datos.
+const datosPortafolio = {
+  proyecto: "Portafolio personal",
+  tipo: "SPA en JavaScript puro",
+  estado: "Activo",
+};
 
-  const navbar = document.createElement("nav");
-  navbar.className = "navbar";
-  navbar.id = "navbar";
+// Descriptores para construir el formulario por bucle.
+const camposFormulario = [
+  { id: "nombre", label: "Nombre:", tag: "input", tipo: "text" },
+  { id: "email", label: "Correo:", tag: "input", tipo: "text" },
+  { id: "mensaje", label: "Mensaje:", tag: "textarea", tipo: null },
+];
 
-  // Usamos for para construir el menu a partir de un array.
-  for (let i = 0; i < navItems.length; i += 1) {
-    const key = navItems[i];
+function crearElemento(tag, attrs, inner) {
+  const el = document.createElement(tag);
 
-    if (!enabledSections.has(key)) {
-      continue;
+  // for: asigna atributos dinamicamente.
+  if (attrs) {
+    for (const [clave, valor] of Object.entries(attrs)) {
+      el.setAttribute(clave, valor);
     }
-
-    const link = document.createElement("a");
-    link.href = "#" + key;
-    link.className = "nav-link";
-    link.dataset.section = key;
-    link.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-    navbar.appendChild(link);
   }
 
-  const panel = document.createElement("main");
-  panel.className = "panel";
-  panel.id = "content";
+  if (inner !== undefined) {
+    el.innerHTML = inner;
+  }
 
-  layout.appendChild(title);
-  layout.appendChild(navbar);
-  layout.appendChild(panel);
-  app.appendChild(layout);
+  return el;
 }
 
-function renderSection(sectionKey) {
-  const content = document.getElementById("content");
-  const sectionInfo = sections.get(sectionKey);
+function construirEstructuraBase() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
 
-  if (!sectionInfo) {
-    content.innerHTML = "<h2 class='section-title'>Seccion no encontrada</h2>";
-    return;
-  }
-
-  let extraMarkup = "";
-
-  // Switch obligatorio: decide como se renderiza cada seccion.
-  switch (sectionKey) {
-    case "inicio":
-      extraMarkup =
-        "<p class='hint'>Selecciona una opcion de la barra para cambiar la vista.</p>";
-      break;
-    case "servicios": {
-      let rows = "";
-      for (let i = 0; i < services.length; i += 1) {
-        rows += `<tr><td>${services[i].name}</td><td>${services[i].price}</td></tr>`;
-      }
-      extraMarkup = `
-				<table>
-					<thead>
-						<tr><th>Servicio</th><th>Precio</th></tr>
-					</thead>
-					<tbody>${rows}</tbody>
-				</table>
-			`;
-      break;
-    }
-    case "portfolio":
-      extraMarkup = `
-				<iframe
-					title="video"
-					height="460"
-					src="https://www.youtube.com/embed/QMJzjz-vWyg"
-					allowfullscreen>
-				</iframe>
-			`;
-      break;
-    case "blog": {
-      let index = 0;
-      let listItems = "";
-
-      // While obligatorio para crear items del blog.
-      while (index < blogPosts.length) {
-        listItems += `<li>${blogPosts[index]}</li>`;
-        index += 1;
-      }
-
-      extraMarkup = `<ul>${listItems}</ul>`;
-      break;
-    }
-    case "formulario":
-      extraMarkup = `
-				<form id="contact-form">
-					<label for="nombre">Nombre</label>
-					<input id="nombre" name="nombre" required>
-
-					<label for="email">Email</label>
-					<input id="email" type="email" name="email" required>
-
-					<label for="mensaje">Mensaje</label>
-					<textarea id="mensaje" name="mensaje" rows="4"></textarea>
-
-					<button type="submit">Enviar</button>
-				</form>
-			`;
-      break;
-    default:
-      extraMarkup = "<p>Contenido no disponible.</p>";
-  }
-
-  content.innerHTML = `
-		<h2 class="section-title">${sectionInfo.title}</h2>
-		<p>${sectionInfo.description}</p>
-		${extraMarkup}
-	`;
-
-  const form = document.getElementById("contact-form");
-  if (form) {
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      alert("Formulario enviado correctamente.");
-    });
-  }
+  app.appendChild(crearElemento("h1", {}, "Practica JS - Navegacion dinamica"));
+  app.appendChild(crearElemento("nav", { id: "nav-root" }));
+  app.appendChild(crearElemento("hr", {}));
+  app.appendChild(crearElemento("div", { id: "secciones-root" }));
+  app.appendChild(crearElemento("hr", {}));
+  app.appendChild(crearElemento("footer", { id: "footer-root" }));
 }
 
-function activateNav(sectionKey) {
-  const links = document.querySelectorAll(".nav-link");
-  links.forEach((link) => {
-    if (link.dataset.section === sectionKey) {
-      link.classList.add("active");
-    } else {
-      link.classList.remove("active");
-    }
+function generarInicio() {
+  const sec = crearElemento("section", { id: "sec-inicio" });
+  sec.appendChild(
+    crearElemento(
+      "p",
+      {},
+      "Bienvenido. Esta pagina cambia secciones desde la barra sin recargar.",
+    ),
+  );
+
+  sec.appendChild(crearElemento("h3", {}, "Habilidades"));
+  const ul = crearElemento("ul", {});
+  for (const skill of habilidades) {
+    ul.appendChild(crearElemento("li", {}, skill));
+  }
+  sec.appendChild(ul);
+
+  sec.appendChild(
+    crearElemento(
+      "p",
+      {},
+      "Tecnologias unicas (Set): " + [...tecnologiasUnicas].join(", "),
+    ),
+  );
+
+  return sec;
+}
+
+function generarServicios() {
+  const sec = crearElemento("section", { id: "sec-servicios" });
+  sec.appendChild(crearElemento("h2", {}, "Servicios"));
+
+  const tabla = crearElemento("table", {
+    border: "1",
+    cellpadding: "8",
+    cellspacing: "0",
   });
+  const thead = crearElemento(
+    "thead",
+    {},
+    "<tr><th>Servicio</th><th>Precio</th></tr>",
+  );
+  const tbody = crearElemento("tbody", {});
+
+  // for clasico para construir filas.
+  for (let i = 0; i < servicios.length; i += 1) {
+    const fila = `<tr><td>${servicios[i].nombre}</td><td>${servicios[i].precio}</td></tr>`;
+    tbody.appendChild(
+      crearElemento("tr", {}, fila.replace("<tr>", "").replace("</tr>", "")),
+    );
+  }
+
+  // Ajuste simple para no anidar tr incorrectamente.
+  tbody.innerHTML = "";
+  for (let i = 0; i < servicios.length; i += 1) {
+    tbody.innerHTML += `<tr><td>${servicios[i].nombre}</td><td>${servicios[i].precio}</td></tr>`;
+  }
+
+  tabla.appendChild(thead);
+  tabla.appendChild(tbody);
+  sec.appendChild(tabla);
+  return sec;
 }
 
-function bindNavigation() {
-  const navbar = document.getElementById("navbar");
+function generarPortfolio() {
+  const sec = crearElemento("section", { id: "sec-portfolio" });
+  sec.appendChild(crearElemento("h2", {}, "Portfolio"));
+  sec.appendChild(
+    crearElemento(
+      "p",
+      {},
+      "Embed de video e imagen, como te piden en la practica.",
+    ),
+  );
 
-  navbar.addEventListener("click", (event) => {
-    const target = event.target;
+  sec.appendChild(
+    crearElemento(
+      "iframe",
+      {
+        width: "560",
+        height: "315",
+        src: "https://www.youtube.com/embed/QMJzjz-vWyg",
+        title: "video",
+        allowfullscreen: "",
+      },
+      "",
+    ),
+  );
 
-    if (target.tagName !== "A") {
+  sec.appendChild(crearElemento("p", {}, ""));
+
+  sec.appendChild(
+    crearElemento("img", {
+      src: "https://inasianspaces.com/wp-content/uploads/2020/08/ch-131-freedom.jpg",
+      alt: "imagen",
+      width: "560",
+    }),
+  );
+
+  const tablaInfo = crearElemento("table", {
+    border: "1",
+    cellpadding: "8",
+    cellspacing: "0",
+  });
+  tablaInfo.appendChild(
+    crearElemento("thead", {}, "<tr><th>Campo</th><th>Valor</th></tr>"),
+  );
+
+  const bodyInfo = crearElemento("tbody", {});
+  // for...in sobre objeto.
+  for (const campo in datosPortafolio) {
+    bodyInfo.innerHTML += `<tr><td>${campo}</td><td>${datosPortafolio[campo]}</td></tr>`;
+  }
+  tablaInfo.appendChild(bodyInfo);
+  sec.appendChild(crearElemento("p", {}, ""));
+  sec.appendChild(tablaInfo);
+
+  return sec;
+}
+
+function generarBlog() {
+  const sec = crearElemento("section", { id: "sec-blog" });
+  sec.appendChild(crearElemento("h2", {}, "Blog"));
+
+  let i = 0;
+  // while para listar posts.
+  while (i < posts.length) {
+    let prefijo;
+    // switch para variar prefijos.
+    switch (i % 3) {
+    tbody.innerHTML += `<tr><td>${servicios[i].nombre}</td><td>${servicios[i].precio}</td></tr>`;
+        break;
+
+    sec.appendChild(
+      crearElemento(
+        "h3",
+        {},
+        `${prefijo} ${posts[i].titulo} (${posts[i].anio})`,
+      ),
+    );
+    sec.appendChild(crearElemento("p", {}, posts[i].texto));
+    sec.appendChild(crearElemento("hr", {}));
+    i += 1;
+  }
+
+  return sec;
+}
+
+function generarFormulario() {
+  const sec = crearElemento("section", { id: "sec-formulario" });
+  sec.appendChild(crearElemento("h2", {}, "Formulario"));
+
+  const form = crearElemento("form", { id: "form-contacto" });
+
+  for (const campo of camposFormulario) {
+    form.appendChild(crearElemento("label", { for: campo.id }, campo.label));
+    form.appendChild(crearElemento("br", {}));
+
+    // if para decidir entre input y textarea.
+    if (campo.tag === "textarea") {
+      form.appendChild(
+        crearElemento("textarea", {
+          id: campo.id,
+          name: campo.id,
+          rows: "4",
+          cols: "40",
+          required: "",
+        }),
+      );
+    } else {
+      form.appendChild(
+        crearElemento("input", {
+          id: campo.id,
+          name: campo.id,
+          type: campo.tipo,
+          required: "",
+        }),
+      );
+    }
+
+    form.appendChild(crearElemento("br", {}));
+    form.appendChild(crearElemento("br", {}));
+  }
+
+  form.appendChild(crearElemento("button", { type: "submit" }, "Enviar"));
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const nombre = document.getElementById("nombre").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const mensaje = document.getElementById("mensaje").value.trim();
+
+    const previo = document.getElementById("form-msg");
+    if (previo) {
+      previo.remove();
+    }
+
+    const msg = crearElemento("p", { id: "form-msg" });
+
+    if (!nombre) {
+      msg.style.color = "red";
+      msg.innerHTML = "El nombre no puede estar vacio.";
+      form.appendChild(msg);
       return;
     }
 
-    event.preventDefault();
-    const sectionKey = target.dataset.section;
-    activateNav(sectionKey);
-    renderSection(sectionKey);
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!email || !emailValido) {
+      msg.style.color = "red";
+      msg.innerHTML = "Ingresa un correo valido.";
+      form.appendChild(msg);
+      return;
+    }
+
+    if (!mensaje) {
+      msg.style.color = "red";
+      msg.innerHTML = "El mensaje no puede estar vacio.";
+      form.appendChild(msg);
+      return;
+    }
+
+    msg.style.color = "green";
+    msg.innerHTML = "Mensaje enviado correctamente, " + nombre + ".";
+    form.appendChild(msg);
+    form.reset();
   });
+
+  sec.appendChild(form);
+  return sec;
 }
 
-createLayout();
-bindNavigation();
-activateNav("inicio");
-renderSection("inicio");
+function navegarA(id) {
+  const todas = document.querySelectorAll("#secciones-root section");
+  for (const sec of todas) {
+    sec.style.display = "none";
+  }
+
+  const target = document.getElementById("sec-" + id);
+  if (target) {
+    target.style.display = "block";
+  }
+
+  const enlaces = document.querySelectorAll("#nav-root a");
+  let i = 0;
+  // while para actualizar enlace activo.
+  while (i < enlaces.length) {
+    if (enlaces[i].dataset.id === id) {
+      enlaces[i].style.fontWeight = "bold";
+    } else {
+      enlaces[i].style.fontWeight = "normal";
+    }
+    i += 1;
+  }
+}
+
+function init() {
+  construirEstructuraBase();
+
+  const nav = document.getElementById("nav-root");
+  for (const [id, etiqueta] of secciones) {
+    const a = crearElemento("a", { href: "#", "data-id": id }, etiqueta);
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      navegarA(id);
+    });
+    nav.appendChild(a);
+    nav.appendChild(document.createTextNode(" | "));
+  }
+
+  const root = document.getElementById("secciones-root");
+  for (const [id] of secciones) {
+    let seccion;
+    switch (id) {
+      case "inicio":
+        seccion = generarInicio();
+        break;
+      case "servicios":
+        seccion = generarServicios();
+        break;
+      case "portfolio":
+        seccion = generarPortfolio();
+        break;
+      case "blog":
+        seccion = generarBlog();
+        break;
+      case "formulario":
+        seccion = generarFormulario();
+        break;
+      default:
+        seccion = crearElemento(
+          "section",
+          { id: "sec-" + id },
+          "Seccion " + id,
+        );
+    }
+
+    seccion.style.display = "none";
+    root.appendChild(seccion);
+  }
+
+  const year = new Date().getFullYear();
+  document
+    .getElementById("footer-root")
+    .appendChild(crearElemento("p", {}, "&copy; " + year + " Mi practica"));
+
+  navegarA("inicio");
+}
+
+document.addEventListener("DOMContentLoaded", init);
